@@ -58,5 +58,4 @@ git clone https://github.com/MajotraderLucky/simulatorpsql.git
 
 ```markdown
 
-- [Русский (Russian)](docs/ru/README.md)
-- https://github.com/MajotraderLucky/simulatorpsql/blob/main/docs/ru/README.md
+- [Русский (Russian)]([docs/ru/README.md](https://github.com/MajotraderLucky/simulatorpsql/blob/main/docs/ru/README.md))
