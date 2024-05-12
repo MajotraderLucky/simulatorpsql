@@ -26,4 +26,4 @@ Detailed instructions on setting up and running the simulator in your local envi
 ### Installation
 1. Clone the repository:
    ```bash
-   git clone [https://github.com/MajotraderLucky/simulatorpsql.git]
+   git clone https://github.com/MajotraderLucky/simulatorpsql.git
