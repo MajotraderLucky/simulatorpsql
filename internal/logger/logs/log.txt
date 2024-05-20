@@ -1,5 +1,0 @@
-{"level":"info","ts":"2024-05-20T04:10:10.379+0300","caller":"logger/logger.go:40","msg":"Logger initialized"}
-{"level":"info","ts":"2024-05-20T04:10:10.380+0300","caller":"app/main.go:15","msg":"Starting the simulator for PostgreSQL database..."}
-{"level":"info","ts":"2024-05-20T04:14:08.932+0300","caller":"logger/logger.go:40","msg":"Logger initialized"}
-{"level":"info","ts":"2024-05-20T04:14:08.932+0300","caller":"app/main.go:16","msg":"Starting the simulator for PostgreSQL database..."}
-{"level":"info","ts":"2024-05-20T04:14:08.941+0300","caller":"app/main.go:33","msg":"Successfully connected and pinged PostgreSQL database!"}
