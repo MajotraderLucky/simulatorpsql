@@ -2,11 +2,12 @@ package storage
 
 import (
 	"database/sql"
+	"fmt"
+	"simulatorpsql/internal/config"
 	"simulatorpsql/internal/logger"
 
-	"go.uber.org/zap"
-
 	_ "github.com/lib/pq"
+	"go.uber.org/zap"
 )
 
 type DBHandler struct {
@@ -32,4 +33,12 @@ func (handler *DBHandler) PingDatabase() error {
 		return err
 	}
 	return nil
+}
+
+// В storage.go
+func SetupDatabase(cfg *config.Config) (*DBHandler, error) {
+	connectionString := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable",
+		cfg.Host, cfg.Port, cfg.User, cfg.Password, cfg.DBName)
+
+	return NewDBHandler(connectionString)
 }
