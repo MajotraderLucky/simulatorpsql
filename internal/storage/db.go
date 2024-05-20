@@ -14,6 +14,8 @@ type DBHandler struct {
 }
 
 func NewDBHandler(connectionString string) (*DBHandler, error) {
+	// Добавляем sslmode=disable для отключения SSL
+	connectionString += " sslmode=disable"
 	db, err := sql.Open("postgres", connectionString)
 	if err != nil {
 		logger.Log.Error("Failed to open database connection", zap.String("connectionString", connectionString), zap.Error(err))
