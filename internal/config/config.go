@@ -1,30 +1,52 @@
-// config/config.go
-
 package config
 
 import (
-	"fmt"
+	"errors"
 	"os"
 	"strconv"
 
+	"simulatorpsql/internal/logger"
+
 	"github.com/joho/godotenv"
+	"go.uber.org/zap"
 )
 
-func LoadEnv() (string, int, string, string, string, error) {
+// Config структура для хранения конфигурации базы данных.
+type Config struct {
+	Host     string
+	Port     int
+	User     string
+	Password string
+	DBName   string
+}
+
+// LoadEnv загружает параметры конфигурации из .env файла и возвращает их в виде структуры Config.
+func LoadEnv() (*Config, error) {
 	if err := godotenv.Load(); err != nil {
-		return "", 0, "", "", "", fmt.Errorf("error loading .env file: %v", err)
+		logger.Log.Error("Error loading .env file", zap.Error(err))
+		return nil, errors.New("failed to load environment variables") // Возвращаем обобщенное сообщение об ошибке
 	}
 
+	// Получение переменных окружения
 	host := os.Getenv("DB_HOST")
-	port := os.Getenv("DB_PORT")
+	portStr := os.Getenv("DB_PORT")
 	user := os.Getenv("DB_USER")
 	password := os.Getenv("DB_PASSWORD")
 	dbname := os.Getenv("DB_NAME")
 
-	portInt, err := strconv.Atoi(port)
+	// Преобразование порта из строки в число
+	port, err := strconv.Atoi(portStr)
 	if err != nil {
-		return "", 0, "", "", "", fmt.Errorf("invalid port value: %v", err)
+		logger.Log.Error("Invalid port value", zap.String("port", portStr), zap.Error(err))
+		return nil, errors.New("invalid port value") // Возвращаем обобщенное сообщение об ошибке
 	}
 
-	return host, portInt, user, password, dbname, nil
+	// Возвращение структуры Config с загруженными данными
+	return &Config{
+		Host:     host,
+		Port:     port,
+		User:     user,
+		Password: password,
+		DBName:   dbname,
+	}, nil
 }
