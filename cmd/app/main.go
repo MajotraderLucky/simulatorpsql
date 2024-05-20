@@ -1,10 +1,10 @@
 package main
 
 import (
-	"database/sql"
 	"fmt"
 	"log"
 	"os"
+	"simulatorpsql/internal/storage"
 	"strconv"
 
 	"github.com/joho/godotenv"
@@ -32,36 +32,22 @@ func loadEnv() (string, int, string, string, string, error) {
 	return host, portInt, user, password, dbname, nil
 }
 
-func pingDatabase() error {
+func main() {
 	host, port, user, password, dbname, err := loadEnv()
 	if err != nil {
-		return fmt.Errorf("failed to load env: %v", err)
+		log.Fatalf("Failed to load environment variables: %v", err)
 	}
-
 	// Формируем строку подключения
-	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable",
+	connectionString := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable",
 		host, port, user, password, dbname)
 
-	// Пытаемся подключиться к базе данных
-	db, err := sql.Open("postgres", psqlInfo)
+	dbHandler, err := storage.NewDBHandler(connectionString)
 	if err != nil {
-		return fmt.Errorf("error opening database: %v", err)
+		log.Fatalf("Failed to initialize database handler: %v", err)
 	}
-	defer db.Close()
-
-	// Пингуем базу данных
-	err = db.Ping()
-	if err != nil {
-		return fmt.Errorf("error pinging database: %v", err)
-	}
-
-	fmt.Println("Successfully connected and pinged PostgreSQL database!")
-	return nil
-}
-
-func main() {
-	err := pingDatabase()
+	err = dbHandler.PingDatabase()
 	if err != nil {
 		log.Fatalf("Failed to ping database: %v", err)
 	}
+	fmt.Println("Successfully connected and pinged PostgreSQL database!")
 }
