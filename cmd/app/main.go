@@ -4,19 +4,40 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
+	"os"
+	"strconv"
 
+	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
 )
 
-const (
-	host     = "localhost"        // Или используйте имя хоста Docker, если запускаете из другого контейнера
-	port     = 5432               // Порт, на котором работает PostgreSQL
-	user     = "your_db_user"     // Имя пользователя, указанное в docker-compose.yml
-	password = "your_db_password" // Пароль пользователя, указанный в docker-compose.yml
-	dbname   = "your_db_name"     // Имя базы данных, указанное в docker-compose.yml
-)
+func loadEnv() (string, int, string, string, string, error) {
+	err := godotenv.Load()
+	if err != nil {
+		return "", 0, "", "", "", fmt.Errorf("error loading .env file: %v", err)
+	}
+
+	host := os.Getenv("DB_HOST")
+	port := os.Getenv("DB_PORT")
+	user := os.Getenv("DB_USER")
+	password := os.Getenv("DB_PASSWORD")
+	dbname := os.Getenv("DB_NAME")
+
+	// Convert port from string to int
+	portInt, err := strconv.Atoi(port)
+	if err != nil {
+		return "", 0, "", "", "", fmt.Errorf("invalid port value: %v", err)
+	}
+
+	return host, portInt, user, password, dbname, nil
+}
 
 func pingDatabase() error {
+	host, port, user, password, dbname, err := loadEnv()
+	if err != nil {
+		return fmt.Errorf("failed to load env: %v", err)
+	}
+
 	// Формируем строку подключения
 	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable",
 		host, port, user, password, dbname)
