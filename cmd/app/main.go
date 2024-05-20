@@ -2,26 +2,33 @@ package main
 
 import (
 	"fmt"
-	"log"
+	"os"
 	"simulatorpsql/internal/config"
+	"simulatorpsql/internal/logger"
 	"simulatorpsql/internal/storage"
 
 	_ "github.com/lib/pq"
+	"go.uber.org/zap"
 )
 
 func main() {
+	logger.InitLogger()
+	logger.Log.Info("Starting the simulator for PostgreSQL database...")
 	host, port, user, password, dbname, err := config.LoadEnv()
 	if err != nil {
-		log.Fatalf("Failed to load environment variables: %v", err)
+		logger.Log.Error("Failed to load environment variables", zap.Error(err))
+		os.Exit(1)
 	}
 	connectionString := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable",
 		host, port, user, password, dbname)
 	dbHandler, err := storage.NewDBHandler(connectionString)
 	if err != nil {
-		log.Fatalf("Failed to initialize database handler: %v", err)
+		logger.Log.Error("Failed to initialize database handler", zap.Error(err))
+		os.Exit(1)
 	}
 	if err = dbHandler.PingDatabase(); err != nil {
-		log.Fatalf("Failed to ping database: %v", err)
+		logger.Log.Error("Failed to ping database", zap.Error(err))
+		os.Exit(1)
 	}
-	fmt.Println("Successfully connected and pinged PostgreSQL database!")
+	logger.Log.Info("Successfully connected and pinged PostgreSQL database!")
 }
